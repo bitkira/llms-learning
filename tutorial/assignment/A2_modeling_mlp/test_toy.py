@@ -37,6 +37,7 @@ toy_test_cases = {
             
             "activation_dtype": torch.bfloat16,
             "activation_device": "cpu",
+            "param_dtype": torch.bfloat16
         }
     },
     "task2": {

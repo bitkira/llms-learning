@@ -2,7 +2,7 @@ from typing import Tuple, Optional
 
 import torch
 import torch.nn.functional as F
-
+from einops import rearrange
 
 def matmul_with_importance(
     input: torch.Tensor,
@@ -32,18 +32,19 @@ def matmul_with_importance(
         grad_weight (torch.Tensor, optional): gradient for the weight tensor if grad_output is given, otherwise None
     """
 
-
+    T_index = []
     for i in range(probs.shape[0]):
-        list(set(probs[i].topk(top_k).indices.tolist()) & set(torch.where(probs[i]>top_p)[0].tolist()))
-        T_input = input[i,list(set(probs[i].topk(top_k).indices.tolist()) & set(torch.where(probs[i]>top_p)[0].tolist())), :]
+        T_index.append(list(set(probs[i].topk(top_k).indices.tolist()) & set(torch.where(probs[i]>top_p)[0].tolist())))
 
     if num_heads == 1:
         A1 = input #[batch_size, seq_len, hidden_size]
         W1 = weight #[hidden_size, embed_size]
+        O1 = torch.einsum('bsh,he->bse',A1,W1)
     else:
         A2 = input.view(input[0], input[1], num_heads, input[-1]//num_heads) #[b, s, nh, hd]
         W2 = weight.view(num_heads, weight[-1]//num_heads, weight[1]) #[nh, hd, e]
-    
-    t_index
-
+        O2 = torch.einsum('bsnh,nhe->bsne',A2,W2)
+        O3 = rearrange('b s n e -> (b s) n e',O2)
+        for i in range(len(T_index)):
+            O3[:, T_index[i], :]
     raise NotImplementedError("TODO: Assignment0 - Task1")
