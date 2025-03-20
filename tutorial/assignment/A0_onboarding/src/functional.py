@@ -33,5 +33,17 @@ def matmul_with_importance(
     """
 
 
+    for i in range(probs.shape[0]):
+        list(set(probs[i].topk(top_k).indices.tolist()) & set(torch.where(probs[i]>top_p)[0].tolist()))
+        T_input = input[i,list(set(probs[i].topk(top_k).indices.tolist()) & set(torch.where(probs[i]>top_p)[0].tolist())), :]
+
+    if num_heads == 1:
+        A1 = input #[batch_size, seq_len, hidden_size]
+        W1 = weight #[hidden_size, embed_size]
+    else:
+        A2 = input.view(input[0], input[1], num_heads, input[-1]//num_heads) #[b, s, nh, hd]
+        W2 = weight.view(num_heads, weight[-1]//num_heads, weight[1]) #[nh, hd, e]
     
+    t_index
+
     raise NotImplementedError("TODO: Assignment0 - Task1")
