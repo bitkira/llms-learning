@@ -31,4 +31,7 @@ def matmul_with_importance(
         grad_input (torch.Tensor, optional): gradient for the input tensor if grad_output is given, otherwise None
         grad_weight (torch.Tensor, optional): gradient for the weight tensor if grad_output is given, otherwise None
     """
+
+
+    
     raise NotImplementedError("TODO: Assignment0 - Task1")
